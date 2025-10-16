@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
@@ -101,7 +103,7 @@ class Task
     {
         $this->updated_at = new \DateTimeImmutable();
 
-        if ($this->created_at === null) {
+        if (null === $this->created_at) {
             $this->created_at = new \DateTimeImmutable();
         }
     }
