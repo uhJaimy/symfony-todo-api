@@ -7,9 +7,9 @@ namespace App\Entity;
 use App\Repository\TaskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Task
 {
     #[ORM\Id]
@@ -24,11 +24,13 @@ class Task
     private ?string $description = null;
 
     #[ORM\Column(length: 16, options: ['default' => 'open'])]
-    private ?string $status = null;
+    private ?string $status = 'open';
 
+    #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $created_at = null;
 
+    #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $updated_at = null;
 
@@ -78,33 +80,8 @@ class Task
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updated_at;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
-    #[ORM\PrePersist]
-    #[ORM\PreUpdate]
-    public function updateTimestamps(): void
-    {
-        $this->updated_at = new \DateTimeImmutable();
-
-        if (null === $this->created_at) {
-            $this->created_at = new \DateTimeImmutable();
-        }
     }
 }
