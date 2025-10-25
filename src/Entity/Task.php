@@ -8,6 +8,7 @@ use App\Repository\TaskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -18,12 +19,18 @@ class Task
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Title is required')]
+    #[Assert\Length(min: 3, max: 255, minMessage: 'Title must be at least {{ limit }} characters long', maxMessage: 'Title cannot be longer than {{ limit }} characters')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 16, options: ['default' => 'open'])]
+    #[Assert\Choice(
+        choices: ['open', 'in_progress', 'completed'],
+        message: 'Status must be one of: {{ choices }}'
+    )]
     private ?string $status = 'open';
 
     #[Gedmo\Timestampable(on: 'create')]
